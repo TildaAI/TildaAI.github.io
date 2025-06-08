@@ -34,6 +34,20 @@
         }
     </script>
     <style>
+        /* Custom cursor */
+        .cursor-follower {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            background-color: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.15s ease-out, width 0.2s ease-out, height 0.2s ease-out;
+            mix-blend-mode: screen;
+        }
         .gradient-text {
             background: linear-gradient(90deg, #ffffff, #3b82f6);
             -webkit-background-clip: text;
@@ -86,6 +100,7 @@
     </style>
 </head>
 <body class="bg-black text-white min-h-screen flex flex-col overflow-x-hidden circuit-pattern">
+    <div class="cursor-follower"></div>
     <!-- Animated neuron network background -->
     <div class="absolute inset-0 overflow-hidden pointer-events-none">
         <div class="relative w-full h-full">
@@ -373,10 +388,27 @@
             let mouseY = 0;
 
             // Track cursor position
+            const cursorFollower = document.querySelector('.cursor-follower');
             document.addEventListener('mousemove', (e) => {
                 mouseX = e.clientX;
                 mouseY = e.clientY;
                 updateConnections();
+
+                // Update cursor follower position
+                cursorFollower.style.left = `${e.clientX}px`;
+                cursorFollower.style.top = `${e.clientY}px`;
+
+                // Scale effect when moving fast
+                const movementX = e.movementX;
+                const movementY = e.movementY;
+                const speed = Math.sqrt(movementX * movementX + movementY * movementY);
+                if (speed > 10) {
+                    cursorFollower.style.width = '40px';
+                    cursorFollower.style.height = '40px';
+                } else {
+                    cursorFollower.style.width = '30px';
+                    cursorFollower.style.height = '30px';
+                }
             });
 
             // Update connections based on cursor position
