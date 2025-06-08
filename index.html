@@ -58,8 +58,13 @@
         .neuron-connection {
             position: absolute;
             background-color: rgba(30, 64, 175, 0.3);
-            height: 2px;
+            height: 1px;
             transform-origin: left center;
+            transition: all 0.3s ease-out;
+        }
+        .neuron-connection.active {
+            background-color: rgba(99, 102, 241, 0.6);
+            height: 2px;
         }
     </style>
 </head>
@@ -214,8 +219,34 @@
             // Animate nodes
             function animateNodes() {
                 nodes.forEach(node => {
-                    const newX = node.x + (Math.random() * 20 - 10);
-                    const newY = node.y + (Math.random() * 20 - 10);
+                    // Calculate distance to cursor
+                    const nodeRect = node.element.getBoundingClientRect();
+                    const nodeCenterX = nodeRect.left + nodeRect.width/2;
+                    const nodeCenterY = nodeRect.top + nodeRect.height/2;
+                    const distanceToCursor = Math.sqrt(
+                        Math.pow(mouseX - nodeCenterX, 2) +
+                        Math.pow(mouseY - nodeCenterY, 2)
+                    );
+
+                    // Determine movement based on cursor proximity
+                    let moveX, moveY;
+                    const repulsionDistance = 120;
+
+                    if (distanceToCursor < repulsionDistance) {
+                        // Repel from cursor
+                        const directionX = nodeCenterX - mouseX;
+                        const directionY = nodeCenterY - mouseY;
+                        const strength = (repulsionDistance - distanceToCursor) / repulsionDistance;
+                        moveX = (Math.random() * 6 - 3) + directionX * 0.1 * strength;
+                        moveY = (Math.random() * 6 - 3) + directionY * 0.1 * strength;
+                    } else {
+                        // Regular random movement
+                        moveX = (Math.random() * 20 - 10);
+                        moveY = (Math.random() * 20 - 10);
+                    }
+
+                    const newX = node.x + moveX;
+                    const newY = node.y + moveY;
 
                     // Keep within bounds
                     node.x = Math.max(0, Math.min(width, newX));
@@ -267,8 +298,49 @@
                 }
             }
 
+            // Variables for cursor position
+            let mouseX = 0;
+            let mouseY = 0;
+
+            // Track cursor position
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                updateConnections();
+            });
+
+            // Update connections based on cursor position
+            function updateConnections() {
+                const connections = document.querySelectorAll('.neuron-connection');
+                connections.forEach(conn => {
+                    const rect = conn.getBoundingClientRect();
+                    const midX = rect.left + rect.width/2;
+                    const midY = rect.top + rect.height/2;
+
+                    const distance = Math.sqrt(
+                        Math.pow(mouseX - midX, 2) +
+                        Math.pow(mouseY - midY, 2)
+                    );
+
+                    const influenceRadius = 200;
+                    if (distance < influenceRadius) {
+                        const strength = 1 - (distance / influenceRadius);
+                        conn.classList.add('active');
+                        conn.style.transform = `${conn.style.transform} scaleX(${1 + strength*0.3})`;
+                        conn.style.opacity = 0.3 + strength*0.7;
+                    } else {
+                        conn.classList.remove('active');
+                        conn.style.transform = conn.style.transform.replace(/scaleX\([^)]*\)/, '');
+                        conn.style.opacity = 0.3;
+                    }
+                });
+            }
+
             // Start animation
             setInterval(animateNodes, 8000);
+
+            // Call updateConnections periodically in case of redraws
+            setInterval(updateConnections, 100);
 
             // Mobile menu toggle
             const menuButton = document.querySelector('button.md\\:hidden');
