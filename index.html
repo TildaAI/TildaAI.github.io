@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tilda AI - Level up your X content</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+font-family: 'Inter', sans-serif;
+background-color: #000000;
+color: #FFFFFF;
+}
+.geometric-pattern {
+background-image: radial-gradient(#1E3A8A 1px, transparent 1px);
+background-size: 30px 30px;
+opacity: 0.1;
+}
+.gradient-overlay {
+background: linear-gradient(135deg, rgba(30, 58, 138, 0.3) 0%, rgba(0, 0, 0, 0) 100%);
+}
+input:focus {
+outline: none;
+box-shadow: 0 0 0 2px #1E3A8A;
+}
+.pricing-card {
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.pricing-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 20px 25px -5px rgba(30, 58, 138, 0.1), 0 10px 10px -5px rgba(30, 58, 138, 0.04);
+}
+.floating-element {
+animation: float 6s ease-in-out infinite;
+}
+@keyframes float {
+0% { transform: translateY(0px); }
+50% { transform: translateY(-15px); }
+100% { transform: translateY(0px); }
+}
+</style>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#1E3A8A',secondary:'#6B7280'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+</head>
+<body>
+<div class="min-h-screen flex flex-col">
+<!-- Hero Section with Background -->
+<div class="relative overflow-hidden">
+<div class="geometric-pattern absolute inset-0"></div>
+<div class="gradient-overlay absolute inset-0"></div>
+<!-- Floating Elements -->
+<div class="absolute top-20 left-20 w-32 h-32 border border-primary opacity-20 rounded-full floating-element" style="animation-delay: 0s;"></div>
+<div class="absolute top-40 right-40 w-48 h-48 border border-primary opacity-10 rounded-full floating-element" style="animation-delay: 1s;"></div>
+<div class="absolute bottom-20 left-1/3 w-24 h-24 border border-primary opacity-15 rounded-full floating-element" style="animation-delay: 2s;"></div>
+<div class="container mx-auto px-6 py-24 relative z-10">
+<div class="text-center mb-16">
+<h1 class="text-6xl font-bold mb-6 text-white">Tilda AI</h1>
+<p class="text-2xl font-light mb-10 max-w-3xl mx-auto">Level up your X content like never before</p>
+<p class="text-3xl font-semibold mb-12">AI-Powered X Analytics & Strategy</p>
+<div class="flex justify-center">
+<button class="bg-primary text-white px-8 py-4 rounded-button text-lg font-semibold hover:bg-opacity-90 transition-all whitespace-nowrap">Get Started</button>
+</div>
+<p class="mt-4 text-gray-300">Try Free for 14 Days</p>
+</div>
+</div>
+</div>
+<!-- Features Section -->
+<div class="bg-black py-20">
+<div class="container mx-auto px-6">
+<div class="grid md:grid-cols-3 gap-10">
+<!-- Feature 1 -->
+<div class="bg-gray-900 rounded p-8 border border-gray-800">
+<div class="w-16 h-16 flex items-center justify-center bg-primary bg-opacity-20 rounded-full mb-6">
+<i class="ri-line-chart-line ri-2x text-primary"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4">Post Analysis</h3>
+<p class="text-gray-400">Our AI analyzes every post and reply to determine what resonates with your audience. Get detailed insights on performance metrics and engagement patterns.</p>
+</div>
+<!-- Feature 2 -->
+<div class="bg-gray-900 rounded p-8 border border-gray-800">
+<div class="w-16 h-16 flex items-center justify-center bg-primary bg-opacity-20 rounded-full mb-6">
+<i class="ri-user-search-line ri-2x text-primary"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4">Audience Insights</h3>
+<p class="text-gray-400">Understand who your followers are, what they care about, and when they're most active. Build a strategy based on real data about your crypto audience.</p>
+</div>
+<!-- Feature 3 -->
+<div class="bg-gray-900 rounded p-8 border border-gray-800">
+<div class="w-16 h-16 flex items-center justify-center bg-primary bg-opacity-20 rounded-full mb-6">
+<i class="ri-strategy-line ri-2x text-primary"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4">Personalized Strategy</h3>
+<p class="text-gray-400">Get a customized content plan detailing what to post, when to post it, and how to optimize for maximum engagement in the crypto community.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Pricing Section -->
+<div class="bg-black py-20">
+<div class="container mx-auto px-6">
+<h2 class="text-4xl font-bold text-center mb-16">Choose Your Plan</h2>
+<div class="grid md:grid-cols-3 gap-8">
+<!-- Basic Plan -->
+<div class="pricing-card bg-gray-900 rounded-lg p-8 border border-gray-800 relative">
+<h3 class="text-2xl font-semibold mb-2">Basic</h3>
+<div class="flex items-end mb-6">
+<span class="text-4xl font-bold">$29</span>
+<span class="text-gray-400 ml-1">/month</span>
+</div>
+<ul class="space-y-3 mb-8">
+<li class="flex items-start">
+<div class="w-5 h-5 flex items-center justify-center mr-3 mt-0.5 text-primary">
+<i class="ri-check-line"></i>
+</div>
+<span>Basic post analysis</span>
+</li>
+<li class="flex items-start">
+<div class="w-5 h-5 flex items-center justify-center mr-3 mt-0.5 text-primary">
+<i class="ri-check-line"></i>
+</div>
+<span>Weekly recommendations</span>
+</li>
+<li class="flex items-start">
+<div class="w-5 h-5 flex items-center justify-center mr-3 mt-0.5 text-primary">
+<i class="ri-check-line"></i>
+</div>
+<span>Basic audience insights</span>
+</li>
+</ul>
+<button class="w-full bg-gray-800 text-white py-3 rounded-button font-medium hover:bg-gray-700 transition-colors whitespace-nowrap">Select Plan</button>
+</div>
+<!-- Pro Plan -->
+<div class="pricing-card bg-gray-900 rounded-lg p-8 border border-primary relative">
+<div class="absolute -top-4 right-4 bg-primary text-white text-sm font-semibold py-1 px-3 rounded-full">Popular</div>
+<h3 class="text-2xl font-semibold mb-2">Pro</h3>
+<div class="flex items-end mb-6">
+<span class="text-4xl font-bold">$79</span>
+<span class="text-gray-400 ml-1">/month</span>
+</div>
+<ul class="space-y-3 mb-8">
+<li class="flex items-start">
+<div class="w-5 h-5 flex items-center justify-center mr-3 mt-0.5 text-primary">
+<i class="ri-check-line"></i>
+</div>
+<span>Advanced analytics</span>
+</li>
+<li class="flex items-start">
+<div class="w-5 h-5 flex items-center justify-center mr-3 mt-0.5 text-primary">
+<i class="ri-check-line"></i>
+</div>
+<span>Daily recommendations</span>
+</li>
+<li class="flex items-start">
+<div class="w-5 h-5 flex items-center justify-center mr-3 mt-0.5 text-primary">
+<i class="ri-check-line"></i>
+</div>
+<span>Detailed audience profiling</span>
+</li>
+<li class="flex items-start">
+<div class="w-5 h-5 flex items-center justify-center mr-3 mt-0.5 text-primary">
+<i class="ri-check-line"></i>
+</div>
+<span>Priority support</span>
+</li>
+</ul>
+<button class="w-full bg-primary text-white py-3 rounded-button font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap">Select Plan</button>
+</div>
+<!-- Enterprise Plan -->
+<div class="pricing-card bg-gray-900 rounded-lg p-8 border border-gray-800 relative">
+<h3 class="text-2xl font-semibold mb-2">Enterprise</h3>
+<div class="flex items-end mb-6">
+<span class="text-4xl font-bold">$199</span>
+<span class="text-gray-400 ml-1">/month</span>
+</div>
+<ul class="space-y-3 mb-8">
+<li class="flex items-start">
+<div class="w-5 h-5 flex items-center justify-center mr-3 mt-0.5 text-primary">
+<i class="ri-check-line"></i>
+</div>
+<span>Full suite of features</span>
+</li>
+<li class="flex items-start">
+<div class="w-5 h-5 flex items-center justify-center mr-3 mt-0.5 text-primary">
+<i class="ri-check-line"></i>
+</div>
+<span>Custom strategy planning</span>
+</li>
+<li class="flex items-start">
+<div class="w-5 h-5 flex items-center justify-center mr-3 mt-0.5 text-primary">
+<i class="ri-check-line"></i>
+</div>
+<span>Dedicated account manager</span>
+</li>
+<li class="flex items-start">
+<div class="w-5 h-5 flex items-center justify-center mr-3 mt-0.5 text-primary">
+<i class="ri-check-line"></i>
+</div>
+<span>API access</span>
+</li>
+</ul>
+<button class="w-full bg-gray-800 text-white py-3 rounded-button font-medium hover:bg-gray-700 transition-colors whitespace-nowrap">Contact Sales</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Newsletter Section -->
+<div class="bg-gray-900 py-20">
+<div class="container mx-auto px-6 text-center">
+<h2 class="text-3xl font-bold mb-6">Ready to transform your X presence?</h2>
+<p class="text-gray-400 mb-8 max-w-2xl mx-auto">Join thousands of crypto influencers already using Tilda AI to optimize their content strategy and grow their audience.</p>
+<div class="max-w-md mx-auto">
+<div class="flex flex-col sm:flex-row gap-4">
+<input type="email" placeholder="Enter your email" class="flex-1 bg-black border border-gray-700 rounded-button px-4 py-3 text-white border-none">
+<button class="bg-primary text-white px-6 py-3 rounded-button font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap">Get Started</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="bg-black py-12 border-t border-gray-800">
+<div class="container mx-auto px-6">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+<div>
+<h3 class="text-2xl font-bold mb-6">Tilda AI</h3>
+<p class="text-gray-400">AI-powered content strategy for crypto influencers on X.</p>
+</div>
+<div>
+<h4 class="text-lg font-semibold mb-4">Product</h4>
+<ul class="space-y-2">
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">Features</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">Pricing</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">Integrations</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">API</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-lg font-semibold mb-4">Resources</h4>
+<ul class="space-y-2">
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">Documentation</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">Blog</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">Community</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">Support</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-lg font-semibold mb-4">Company</h4>
+<ul class="space-y-2">
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">About</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">Careers</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">Privacy</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">Terms</a></li>
+</ul>
+</div>
+</div>
+<div class="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
+<p class="text-gray-500 mb-4 md:mb-0">© 2025 Tilda AI. All rights reserved.</p>
+<div class="flex space-x-6">
+<a href="#" class="text-gray-400 hover:text-white transition-colors">
+<div class="w-10 h-10 flex items-center justify-center">
+<i class="ri-twitter-x-line ri-lg"></i>
+</div>
+</a>
+<a href="#" class="text-gray-400 hover:text-white transition-colors">
+<div class="w-10 h-10 flex items-center justify-center">
+<i class="ri-discord-line ri-lg"></i>
+</div>
+</a>
+<a href="#" class="text-gray-400 hover:text-white transition-colors">
+<div class="w-10 h-10 flex items-center justify-center">
+<i class="ri-telegram-line ri-lg"></i>
+</div>
+</a>
+<a href="#" class="text-gray-400 hover:text-white transition-colors">
+<div class="w-10 h-10 flex items-center justify-center">
+<i class="ri-github-line ri-lg"></i>
+</div>
+</a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<script id="animation-script">
+document.addEventListener('DOMContentLoaded', function() {
+const pricingCards = document.querySelectorAll('.pricing-card');
+pricingCards.forEach(card => {
+card.addEventListener('mouseenter', function() {
+this.classList.add('shadow-lg');
+});
+card.addEventListener('mouseleave', function() {
+this.classList.remove('shadow-lg');
+});
+});
+});
+</script>
+</body>
+</html>
