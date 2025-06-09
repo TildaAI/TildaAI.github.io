@@ -32,6 +32,116 @@
                 }
             }
         }
+
+        // Slot Machine Animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const slotMachines = document.querySelectorAll('.slot-machine');
+
+            // Initialize slot machines
+            slotMachines.forEach(slot => {
+                const itemsContainer = slot.querySelector('.slot-items');
+                const itemsString = itemsContainer.dataset.items;
+                const items = itemsString.split(',');
+                const finalWord = slot.querySelector('.final-word');
+
+                // Create slot items
+                items.forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'slot-item';
+                    itemElement.textContent = item;
+                    itemsContainer.appendChild(itemElement);
+                });
+
+                // Start animation when machine comes into view
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            animateSlotMachine(slot);
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.5 });
+
+                observer.observe(slot);
+            });
+
+            // Animate a slot machine
+            function animateSlotMachine(slot) {
+                const itemsContainer = slot.querySelector('.slot-items');
+                const items = Array.from(slot.querySelectorAll('.slot-item'));
+                const finalWord = slot.querySelector('.final-word');
+                const finalText = finalWord.dataset.final;
+                const lever = slot.querySelector('.slot-lever');
+
+                // Start lever animation
+                lever.style.transform = 'translateX(10px) rotate(5deg)';
+
+                // Initial spin (fast)
+                let positions = {};
+                items.forEach((item, index) => {
+                    positions[index] = index * -150;
+                });
+
+                const initialSpinDuration = 2000;
+                const startTime = Date.now();
+
+                function spin() {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / initialSpinDuration, 1);
+
+                    if (progress < 1) {
+                        // Fast spinning
+                        items.forEach((item, index) => {
+                            positions[index] -= 15;
+                            if (positions[index] < -150 * (items.length - 1)) {
+                                positions[index] = 0;
+                            }
+                            item.style.transform = `translateY(${positions[index]}px)`;
+                        });
+                        requestAnimationFrame(spin);
+                    } else {
+                        // Slow down and land on final word
+                        slowDownAndStop(finalText);
+                    }
+                }
+
+                function slowDownAndStop(finalText) {
+                    const slowdownDuration = 2000;
+                    const slowdownStart = Date.now();
+
+                    function slowdown() {
+                        const elapsed = Date.now() - slowdownStart;
+                        const progress = Math.min(elapsed / slowdownDuration, 1);
+
+                        if (progress < 1) {
+                            // Slowing down
+                            const speed = 15 * (1 - progress * 0.9);
+                            items.forEach((item, index) => {
+                                positions[index] -= speed;
+                                if (positions[index] < -150 * (items.length - 1)) {
+                                    positions[index] = 0;
+                                }
+                                item.style.transform = `translateY(${positions[index]}px)`;
+                            });
+                            requestAnimationFrame(slowdown);
+                        } else {
+                            // Show final word
+                            itemsContainer.style.opacity = '0';
+                            finalWord.style.opacity = '1';
+
+                            // Reset lever
+                            setTimeout(() => {
+                                lever.style.transform = '';
+                            }, 300);
+                        }
+                    }
+
+                    slowdown();
+                }
+
+                spin();
+            }
+        });
     </script>
     <style>
         /* Custom cursor */
@@ -137,6 +247,80 @@
         }
         .download-pulse {
             animation: downloadPulse 2s infinite ease-in-out;
+        }
+        /* Slot Machine Styles */
+        .slot-machine {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .slot-window {
+            background: linear-gradient(135deg, #0a1a35 0%, #15243f 50%, #0a1a35 100%);
+            border: 3px solid rgba(249, 234, 181, 0.5);
+            border-radius: 10px;
+            height: 150px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slot-items {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            transition: transform 0.1s ease-out;
+        }
+
+        .slot-item {
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: rgb(249, 234, 181);
+            text-shadow: 0 0 10px rgba(249, 234, 181, 0.7);
+        }
+
+        .final-word {
+            position: absolute;
+            font-size: 2rem;
+            font-weight: bold;
+            color: rgb(249, 234, 181);
+            text-shadow: 0 0 10px rgba(249, 234, 181, 0.7);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .slot-controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .slot-lever {
+            width: 40px;
+            height: 80px;
+            background: linear-gradient(to bottom, #3a3a3a, #1a1a1a);
+            border-radius: 5px;
+            border: 2px solid rgba(249, 234, 181, 0.3);
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .slot-lever:hover {
+            transform: translateX(5px);
+        }
+
+        .slot-lever:active {
+            transform: translateX(10px) rotate(5deg);
         }
     </style>
 </head>
@@ -251,6 +435,39 @@
         </div>
     </section>
 
+    <!-- Slot Machines Section -->
+    <section id="slotMachines" class="relative z-10 py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+        <div class="flex flex-col items-center">
+            <h2 class="text-3xl font-bold mb-12 gradient-text">Our Winning Formula</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
+                <!-- Slot Machine 1 -->
+                <div class="slot-machine" data-final-word="EASY">
+                    <div class="slot-container bg-gradient-to-b from-yellow-100 to-amber-300/80 border-4 border-yellow-400 rounded-lg p-2 shadow-lg h-32 flex items-center justify-center neon-glow">
+                        <div class="slot-text text-3xl font-bold text-yellow-900 text-center"></div>
+                    </div>
+                    <div class="lever absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-8 w-6 h-20 bg-amber-600 rounded-md hover:bg-amber-500 cursor-pointer"></div>
+                </div>
+
+                <!-- Slot Machine 2 -->
+                <div class="slot-machine" data-final-word="FAST">
+                    <div class="slot-container bg-gradient-to-b from-yellow-100 to-amber-300/80 border-4 border-yellow-400 rounded-lg p-2 shadow-lg h-32 flex items-center justify-center neon-glow">
+                        <div class="slot-text text-3xl font-bold text-yellow-900 text-center"></div>
+                    </div>
+                    <div class="lever absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-8 w-6 h-20 bg-amber-600 rounded-md hover:bg-amber-500 cursor-pointer"></div>
+                </div>
+
+                <!-- Slot Machine 3 -->
+                <div class="slot-machine" data-final-word="STRONG">
+                    <div class="slot-container bg-gradient-to-b from-yellow-100 to-amber-300/80 border-4 border-yellow-400 rounded-lg p-2 shadow-lg h-32 flex items-center justify-center neon-glow">
+                        <div class="slot-text text-3xl font-bold text-yellow-900 text-center"></div>
+                    </div>
+                    <div class="lever absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-8 w-6 h-20 bg-amber-600 rounded-md hover:bg-amber-500 cursor-pointer"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section class="relative z-10 py-8 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto transition-all duration-500 hover:scale-[1.01] bg-darkyellow/70 backdrop-blur-sm rounded-xl p-6 border border-gray-800 neon-glow">
         <div class="text-center">
             <h3 class="text-2xl font-bold mb-4 text-yellow-400 animate-float" style="animation-delay: 0.2s">
@@ -274,6 +491,58 @@
             <div class="absolute inset-0 bg-gradient-to-r from-[rgb(249,234,181)] via-[rgb(249,234,181)] to-[rgb(249,234,181)] animate-[pulse_3s_infinite]" style="mask-image: linear-gradient(90deg, transparent, white 30%, white 70%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, white 30%, white 70%, transparent); animation-delay: 0.5s;"></div>
         </div>
     </section>
+
+    <!-- Slot Machines Section -->
+    <section id="slot-machines" class="relative z-10 py-16 px-4 sm:px-6 lg:px-8 bg-black/50">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl font-bold mb-12 text-center gradient-text">Your Business Growth Engine</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <!-- Slot Machine 1 -->
+                <div class="slot-machine">
+                    <div class="slot-window">
+                        <div class="final-word" data-final="EASY">EASY</div>
+                        <div class="slot-items" data-items="PROFIT,GROWTH,SCALE,TARGET,LEADS,SALES,CLOSE,ROI,KPI,SEO">
+                            <!-- Items will be added by JS -->
+                        </div>
+                    </div>
+                    <div class="slot-controls">
+                        <div class="slot-lever"></div>
+                    </div>
+                </div>
+
+                <!-- Slot Machine 2 -->
+                <div class="slot-machine">
+                    <div class="slot-window">
+                        <div class="final-word" data-final="FAST">FAST</div>
+                        <div class="slot-items" data-items="CRYPTO,MARKET,BOOST,LEVERAGE,GAIN,ASSETS,TRADE,WIN,MONEY,AI">
+                            <!-- Items will be added by JS -->
+                        </div>
+                    </div>
+                    <div class="slot-controls">
+                        <div class="slot-lever"></div>
+                    </div>
+                </div>
+
+                <!-- Slot Machine 3 -->
+                <div class="slot-machine">
+                    <div class="slot-window">
+                        <div class="final-word" data-final="STRONG">STRONG</div>
+                        <div class="slot-items" data-items="NFT,BLOCKCHAIN,TOKEN,LIQUIDITY,YIELD,VOLUME,APY,TVL,DEFI,WEB3">
+                            <!-- Items will be added by JS -->
+                        </div>
+                    </div>
+                    <div class="slot-controls">
+                        <div class="slot-lever"></div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-center mt-12 text-gray-400 max-w-2xl mx-auto">
+                The winning combination for your online business: easy setup, fast results, and strong performance.
+            </p>
+        </div>
+    </section>
     </div>
 
     <footer class="relative z-10 py-8 px-4 sm:px-6 lg:px-8 text-center text-gray-400 text-sm">
@@ -283,7 +552,73 @@
     </footer>
 
     <script>
+        // Slot machine words
+        const slotWords = [
+            "PROFIT", "GROWTH", "SCALE", "TARGET", "LEADS",
+            "SALES", "CLOSE", "ROI", "KPI", "SEO", "CRYPTO",
+            "MARKET", "BOOST", "LEVERAGE", "GAIN", "ASSETS",
+            "TREND", "TRADE", "WIN", "MONEY", "AI", "TOKEN",
+            "NFT", "BLOCKCHAIN", "LIQUIDITY"
+        ];
+
+        // Slot machine animation
+        function animateSlotMachine(slot, finalWord) {
+            const slotTextElement = slot.querySelector('.slot-text');
+            const lever = slot.querySelector('.lever');
+
+            if (!lever || !slotTextElement) return;
+
+            // Initial spin animation
+            lever.classList.add('animate-pulse');
+            slotTextElement.textContent = '';
+
+            // Number of spins before stopping
+            const spins = 10 + Math.floor(Math.random() * 10);
+            let currentSpin = 0;
+
+            let spinInterval = setInterval(() => {
+                currentSpin++;
+                slotTextElement.textContent = slotWords[Math.floor(Math.random() * slotWords.length)];
+
+                // Stop spinning - land on final word
+                if (currentSpin >= spins) {
+                    clearInterval(spinInterval);
+                    setTimeout(() => {
+                        slotTextElement.textContent = finalWord;
+                        lever.classList.remove('animate-pulse');
+
+                        // Add winning effects
+                        slot.querySelector('.slot-container').classList.add('animate-ping');
+                        setTimeout(() => {
+                            slot.querySelector('.slot-container').classList.remove('animate-ping');
+                        }, 2000);
+                    }, 300);
+                }
+            }, 100);
+        }
+
+        // Intersection Observer for slot machines
+        function setupSlotObserver() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const slotMachines = document.querySelectorAll('.slot-machine');
+                        slotMachines.forEach((slot, index) => {
+                            setTimeout(() => {
+                                animateSlotMachine(slot, slot.dataset.finalWord);
+                            }, index * 500);
+                        });
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            const slotSection = document.getElementById('slotMachines');
+            if (slotSection) observer.observe(slotSection);
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
+            setupSlotObserver();
             // Create neuron network background
             const container = document.getElementById('neuronNodes');
             const width = container.offsetWidth;
