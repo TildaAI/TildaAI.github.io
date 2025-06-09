@@ -17,6 +17,17 @@
                     animation: {
                         'pulse-slow': 'pulse 5s infinite',
                         'float': 'float 6s ease-in-out infinite',
+                        'fade-in': 'fadeIn 1s ease-in-out forwards',
+                        'slide-up': 'slideUp 1s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
                     },
                     keyframes: {
                         float: {
@@ -45,7 +56,8 @@
             pointer-events: none;
             z-index: 9999;
             transform: translate(-50%, -50%);
-            transition: transform 0.15s ease-out, width 0.2s ease-out, height 0.2s ease-out;
+            transition: transform 0.1s cubic-bezier(.08,.52,.52,1), width 0.2s cubic-bezier(.08,.52,.52,1), height 0.2s cubic-bezier(.08,.52,.52,1);
+            will-change: transform;
             mix-blend-mode: screen;
         }
         .gradient-text {
@@ -68,6 +80,8 @@
             position: absolute;
             width: 8px;
             height: 8px;
+            will-change: transform, opacity;
+            backface-visibility: hidden;
             background-color: rgb(249, 234, 181);
             border-radius: 50%;
             top: 50%;
@@ -170,7 +184,7 @@
         }
     </style>
 </head>
-<body class="bg-black text-white min-h-screen flex flex-col overflow-x-hidden circuit-pattern">
+<body class="bg-black text-white min-h-screen flex flex-col overflow-x-hidden circuit-pattern scroll-smooth" style="scroll-behavior: smooth; -webkit-overflow-scrolling: touch;">
     <div class="cursor-follower"></div>
     <!-- Animated neuron nodes covering entire site -->
     <div id="neuronNodes" class="fixed inset-0 pointer-events-none z-0"></div>
@@ -235,7 +249,7 @@
         </div>
     </main>
 
-    <section class="relative z-10 py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+    <section class="relative z-10 py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto" data-animate="slide">
         <h2 class="text-3xl font-bold mb-8 text-center gradient-text">Pricing Plans</h2>
         <div class="grid md:grid-cols-3 gap-8">
             <div class="bg-darkyellow/70 backdrop-blur-sm rounded-xl p-6 border border-gray-800 hover:shadow-lg transform transition-all duration-500 hover:-translate-y-2">
@@ -277,7 +291,7 @@
         </div>
     </section>
 
-    <section class="relative z-10 py-8 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto transition-all duration-500 hover:scale-[1.01] bg-darkyellow/70 backdrop-blur-sm rounded-xl p-6 border border-gray-800 neon-glow">
+    <section class="relative z-10 py-8 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto transition-all duration-500 hover:scale-[1.01] bg-darkyellow/70 backdrop-blur-sm rounded-xl p-6 border border-gray-800 neon-glow" data-animate="fade">
         <div class="text-center">
             <h3 class="text-4xl font-bold mb-4 text-yellow-400 animate-float" style="animation-delay: 0.2s">
                 Problem-Solution
