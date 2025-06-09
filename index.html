@@ -656,8 +656,17 @@
         const expiryDateInput = document.getElementById('expiryDate');
         const cvvInput = document.getElementById('cvv');
 
-        closePaymentModal.addEventListener('click', () => {
+        if (closePaymentModal && paymentModal) {
+            closePaymentModal.addEventListener('click', () => {
                 paymentModal.classList.add('hidden');
+            });
+
+            paymentModal.addEventListener('click', (e) => {
+                if (e.target === paymentModal) {
+                    paymentModal.classList.add('hidden');
+                }
+            });
+        }
 
         // Format card number input
         if (cardNumberInput) {
