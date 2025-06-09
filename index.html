@@ -117,6 +117,27 @@
         .animate-wave {
             animation: wave 3s infinite ease-in-out;
         }
+        @keyframes downloadPulse {
+            0%, 100% {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+            25% {
+                transform: scale(1.1) translateY(-2px);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scale(1.05) translateY(2px);
+                opacity: 0.9;
+            }
+            75% {
+                transform: scale(1.08) translateY(-1px);
+                opacity: 0.85;
+            }
+        }
+        .download-pulse {
+            animation: downloadPulse 2s infinite ease-in-out;
+        }
     </style>
 </head>
 <body class="bg-black text-white min-h-screen flex flex-col overflow-x-hidden circuit-pattern">
@@ -508,7 +529,7 @@
 
             // Check if all elements exist before adding event listeners
             if (!modal || !closeBtn || !analyzerText || !progressBar || !tryButton) {
-                console.error('Modal elements not found');
+                console.log('Modal elements not found, skipping modal functionality');
                 return;
             }
 
@@ -624,7 +645,7 @@
             <div class="text-center">
                 <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-white to-blue-600 p-1 neon-glow mb-6">
                     <div class="w-full h-full rounded-full bg-black flex items-center justify-center">
-                        <i class="fas fa-brain text-2xl gradient-text"></i>
+                        <i class="fas fa-download text-2xl gradient-text download-pulse"></i>
                     </div>
                 </div>
                 <h3 class="text-xl font-bold mb-6 gradient-text">Analyzing Your Profile</h3>
