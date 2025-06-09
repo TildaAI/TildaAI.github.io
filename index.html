@@ -103,6 +103,20 @@
         @keyframes blink-animation {
             to { visibility: hidden; }
         }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
+        }
+        @keyframes wave {
+            0%, 100% { transform: scaleY(1) translateY(0); }
+            50% { transform: scaleY(1.2) translateY(-10%); }
+        }
+        .animate-shimmer {
+            animation: shimmer 2s infinite linear;
+        }
+        .animate-wave {
+            animation: wave 3s infinite ease-in-out;
+        }
     </style>
 </head>
 <body class="bg-black text-white min-h-screen flex flex-col overflow-x-hidden circuit-pattern">
@@ -308,59 +322,70 @@
                 const baseHue = 210; // blue hue
 
                 nodes.forEach(node => {
-                    if (!node.element) return;
+                    if (!node || !node.element || !node.element.style || !node.element.getBoundingClientRect) return;
 
-                    // Calculate distance to cursor
-                    const nodeRect = node.element.getBoundingClientRect();
-                    const nodeCenterX = nodeRect.left + nodeRect.width/2;
-                    const nodeCenterY = nodeRect.top + nodeRect.height/2;
-                    const distanceToCursor = Math.sqrt(
-                        Math.pow(mouseX - nodeCenterX, 2) +
-                        Math.pow(mouseY - nodeCenterY, 2)
-                    );
+                    try {
+                        // Calculate distance to cursor
+                        const nodeRect = node.element.getBoundingClientRect();
+                        const nodeCenterX = nodeRect.left + nodeRect.width/2;
+                        const nodeCenterY = nodeRect.top + nodeRect.height/2;
+                        const distanceToCursor = Math.sqrt(
+                            Math.pow(mouseX - nodeCenterX, 2) +
+                            Math.pow(mouseY - nodeCenterY, 2)
+                        );
 
-                    // Dynamic color change
-                    const randomHue = baseHue + (Math.random() * hueVariation - hueVariation/2);
-                    node.element.className = 'neuron-node pulse absolute w-4 h-4';
+                        // Dynamic color change
+                        const randomHue = baseHue + (Math.random() * hueVariation - hueVariation/2);
+                        node.element.className = 'neuron-node pulse absolute w-4 h-4';
 
-                    // Determine movement based on cursor proximity
-                    let moveX, moveY;
-                    const repulsionDistance = 120;
+                        // Determine movement based on cursor proximity
+                        let moveX, moveY;
+                        const repulsionDistance = 120;
 
-                    if (distanceToCursor < repulsionDistance) {
-                        // Repel from cursor with more force
-                        const directionX = nodeCenterX - mouseX;
-                        const directionY = nodeCenterY - mouseY;
-                        const strength = (repulsionDistance - distanceToCursor) / repulsionDistance;
-                        moveX = (Math.random() * 12 - 6) + directionX * 0.15 * strength;
-                        moveY = (Math.random() * 12 - 6) + directionY * 0.15 * strength;
-                    } else {
-                        // More fluid organic movement
-                        const angle = Math.random() * Math.PI * 2;
-                        const distance = 4 + Math.random() * 4;
-                        moveX = Math.cos(angle) * distance;
-                        moveY = Math.sin(angle) * distance;
-                    }
+                        if (distanceToCursor < repulsionDistance) {
+                            // Repel from cursor with more force
+                            const directionX = nodeCenterX - mouseX;
+                            const directionY = nodeCenterY - mouseY;
+                            const strength = (repulsionDistance - distanceToCursor) / repulsionDistance;
+                            moveX = (Math.random() * 12 - 6) + directionX * 0.15 * strength;
+                            moveY = (Math.random() * 12 - 6) + directionY * 0.15 * strength;
+                        } else {
+                            // More fluid organic movement
+                            const angle = Math.random() * Math.PI * 2;
+                            const distance = 4 + Math.random() * 4;
+                            moveX = Math.cos(angle) * distance;
+                            moveY = Math.sin(angle) * distance;
+                        }
 
-                    const newX = node.x + moveX;
-                    const newY = node.y + moveY;
+                        const newX = node.x + moveX;
+                        const newY = node.y + moveY;
 
-                    // Keep within bounds
-                    node.x = Math.max(0, Math.min(width, newX));
-                    node.y = Math.max(0, Math.min(height, newY));
+                        // Keep within bounds
+                        node.x = Math.max(0, Math.min(width, newX));
+                        node.y = Math.max(0, Math.min(height, newY));
 
-                    // Apply movement with smoother transitions
-                    if (node.element.style) {
-                        node.element.style.transition = 'all 4s cubic-bezier(0.4, 0, 0.2, 1)';
-                        node.element.style.left = `${node.x}px`;
-                        node.element.style.top = `${node.y}px`;
+                        // Apply movement with smoother transitions
+                        if (node.element && node.element.style) {
+                            node.element.style.transition = 'all 4s cubic-bezier(0.4, 0, 0.2, 1)';
+                            node.element.style.left = `${node.x}px`;
+                            node.element.style.top = `${node.y}px`;
+                        }
+                    } catch (error) {
+                        // Silently handle any errors with node manipulation
+                        console.log('Node animation error handled');
                     }
                 });
 
                 // Recreate connections periodically
                 setTimeout(() => {
-                    document.querySelectorAll('.neuron-connection').forEach(el => el.remove());
-                    createConnections();
+                    try {
+                        document.querySelectorAll('.neuron-connection').forEach(el => {
+                            if (el && el.remove) el.remove();
+                        });
+                        createConnections();
+                    } catch (error) {
+                        console.log('Connection recreation error handled');
+                    }
                 }, 8000);
             }
 
@@ -487,14 +512,41 @@
                 return;
             }
 
-            let messageIndex = 0;
-            let intervalId;
-            let progress = 0;
-            let isDeleting = false;
-            let currentText = '';
             let typingSpeed = 150;
+            let isComplete = false;
+            let startTime = 0;
+            let hasCompleted = false;
+            const totalDuration = 5 * 60 * 1000; // 5 minutes in milliseconds
 
             function typeWriter() {
+                if (!analyzerText || !progressBar) return;
+
+                const elapsed = Date.now() - startTime;
+
+                // Check if we've reached the final message
+                if (messageIndex >= messages.length) {
+                    if (!hasCompleted) {
+                        analyzerText.innerHTML = '<span class="text-green-400">✓ Analysis Complete! Everything is ready.</span>';
+                        progressBar.style.width = '100%';
+                        progressBar.style.background = 'linear-gradient(90deg, #10b981, #059669, #047857)';
+                        progressBar.style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.5)';
+                        hasCompleted = true;
+                    }
+                    return;
+                }
+
+                // Check if 5 minutes have passed (fallback)
+                if (elapsed >= totalDuration) {
+                    if (!hasCompleted) {
+                        analyzerText.innerHTML = '<span class="text-green-400">✓ Analysis Complete! Everything is ready.</span>';
+                        progressBar.style.width = '100%';
+                        progressBar.style.background = 'linear-gradient(90deg, #10b981, #059669, #047857)';
+                        progressBar.style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.5)';
+                        hasCompleted = true;
+                    }
+                    return;
+                }
+
                 const fullMessage = messages[messageIndex];
 
                 if (isDeleting) {
@@ -506,32 +558,45 @@
                 analyzerText.textContent = currentText + (isDeleting ? '' : '|');
 
                 if (!isDeleting && currentText === fullMessage) {
+                    // Update progress bar based on message completion
+                    const messageProgress = ((messageIndex + 1) / messages.length) * 100;
+                    progressBar.style.width = `${messageProgress}%`;
+
+                    // If this is the last message ("Done!"), complete the progress bar
+                    if (messageIndex === messages.length - 1) {
+                        progressBar.style.width = '100%';
+                        progressBar.style.background = 'linear-gradient(90deg, #10b981, #059669, #047857)';
+                        progressBar.style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.5)';
+                    }
+
+                    // Calculate how long to stay on this message
+                    const timePerMessage = totalDuration / messages.length;
+                    const displayTime = Math.max(2000, timePerMessage * 0.3); // At least 2 seconds, or 30% of allocated time
+
                     isDeleting = true;
                     typingSpeed = 100;
-                    setTimeout(typeWriter, 1000);
+                    setTimeout(typeWriter, displayTime);
                 } else if (isDeleting && currentText === '') {
                     isDeleting = false;
-                    messageIndex = (messageIndex + 1) % messages.length;
+                    messageIndex++;
                     typingSpeed = 150;
-                    setTimeout(typeWriter, 300);
+                    setTimeout(typeWriter, 500);
                 } else {
                     setTimeout(typeWriter, typingSpeed);
-                }
-
-                // Update progress
-                if (!isDeleting && currentText.length === 1) {
-                    progress += 100 / messages.length;
-                    progressBar.style.width = `${Math.min(progress, 100)}%`;
                 }
             }
 
             tryButton.addEventListener('click', () => {
                 modal.classList.remove('hidden');
                 messageIndex = 0;
-                progress = 0;
+                startTime = Date.now(); // Start the 5-minute timer
                 progressBar.style.width = '0%';
+                progressBar.style.background = 'linear-gradient(90deg, #3b82f6, #2563eb, #1d4ed8)';
+                progressBar.style.boxShadow = 'none';
                 currentText = '';
                 isDeleting = false;
+                isComplete = false;
+                hasCompleted = false;
                 analyzerText.textContent = '';
                 typeWriter();
             });
@@ -564,8 +629,12 @@
                 </div>
                 <h3 class="text-xl font-bold mb-6 gradient-text">Analyzing Your Profile</h3>
                 <div id="analyzerText" class="h-12 text-lg font-mono text-blue-300 overflow-hidden"></div>
-                <div class="mt-8 w-full bg-gray-700 rounded-full h-2.5">
-                    <div id="progressBar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+                <div class="mt-8 w-full bg-gray-700 rounded-full h-3 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-blue-400/20 to-transparent animate-pulse"></div>
+                    <div id="progressBar" class="bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 h-3 rounded-full relative overflow-hidden transition-all duration-500 ease-out" style="width: 0%">
+                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
+                        <div class="absolute inset-0 bg-gradient-to-r from-blue-300/50 via-blue-400/80 to-blue-500/50 animate-wave"></div>
+                    </div>
                 </div>
             </div>
         </div>
