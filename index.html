@@ -215,29 +215,38 @@
             <div class="bg-darkblue/70 backdrop-blur-sm rounded-xl p-6 border border-gray-800 hover:shadow-lg transform transition-all duration-500 hover:-translate-y-2">
                 <h3 class="text-xl font-semibold mb-4">Basic</h3>
                 <p class="text-4xl font-bold mb-4">$9.99<span class="text-base text-gray-400">/month</span></p>
-                <ul class="space-y-2 text-gray-300">
+                <ul class="space-y-2 text-gray-300 mb-6">
                     <li class="flex items-start"><i class="fas fa-check text-blue-400 mr-2 mt-1 animate-pulse" style="animation-delay: 0.1s"></i> Basic analytics</li>
                     <li class="flex items-start"><i class="fas fa-check text-blue-400 mr-2 mt-1 animate-pulse" style="animation-delay: 0.2s"></i> Daily reports</li>
                     <li class="flex items-start"><i class="fas fa-check text-blue-400 mr-2 mt-1 animate-pulse" style="animation-delay: 0.3s"></i> Email support</li>
                 </ul>
+                <button class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105" onclick="openPaymentModal('Basic', '$9.99')">
+                    Choose Plan
+                </button>
             </div>
             <div class="bg-darkblue/70 backdrop-blur-sm rounded-xl p-6 border border-gray-800 neon-glow hover:shadow-lg transform transition-all duration-500 hover:-translate-y-2">
                 <h3 class="text-xl font-semibold mb-4">Pro</h3>
                 <p class="text-4xl font-bold mb-4">$29.99<span class="text-base text-gray-400">/month</span></p>
-                <ul class="space-y-2 text-gray-300">
+                <ul class="space-y-2 text-gray-300 mb-6">
                     <li class="flex items-start"><i class="fas fa-check text-blue-400 mr-2 mt-1 animate-pulse" style="animation-delay: 0.1s"></i> Advanced analytics</li>
                     <li class="flex items-start"><i class="fas fa-check text-blue-400 mr-2 mt-1 animate-pulse" style="animation-delay: 0.2s"></i> Real-time monitoring</li>
                     <li class="flex items-start"><i class="fas fa-check text-blue-400 mr-2 mt-1 animate-pulse" style="animation-delay: 0.3s"></i> Priority support</li>
                 </ul>
+                <button class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105" onclick="openPaymentModal('Pro', '$29.99')">
+                    Choose Plan
+                </button>
             </div>
             <div class="bg-darkblue/70 backdrop-blur-sm rounded-xl p-6 border border-gray-800 hover:shadow-lg transform transition-all duration-500 hover:-translate-y-2">
                 <h3 class="text-xl font-semibold mb-4">Enterprise</h3>
                 <p class="text-4xl font-bold mb-4">$99.99<span class="text-base text-gray-400">/month</span></p>
-                <ul class="space-y-2 text-gray-300">
+                <ul class="space-y-2 text-gray-300 mb-6">
                     <li class="flex items-start"><i class="fas fa-check text-blue-400 mr-2 mt-1 animate-pulse" style="animation-delay: 0.1s"></i> Full API access</li>
                     <li class="flex items-start"><i class="fas fa-check text-blue-400 mr-2 mt-1 animate-pulse" style="animation-delay: 0.2s"></i> Custom strategies</li>
                     <li class="flex items-start"><i class="fas fa-check text-blue-400 mr-2 mt-1 animate-pulse" style="animation-delay: 0.3s"></i> 24/7 dedicated support</li>
                 </ul>
+                <button class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105" onclick="openPaymentModal('Enterprise', '$99.99')">
+                    Choose Plan
+                </button>
             </div>
         </div>
     </section>
@@ -265,12 +274,6 @@
             <div class="absolute inset-0 bg-gradient-to-r from-blue-400 via-blue-600 to-blue-800 animate-[pulse_3s_infinite]" style="mask-image: linear-gradient(90deg, transparent, white 30%, white 70%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, white 30%, white 70%, transparent); animation-delay: 0.5s;"></div>
         </div>
     </section>
-
-        <div class="relative h-4 overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-blue-400/80 to-transparent animate-[glitch-line_2s_infinite]" style="mask-image: linear-gradient(90deg, transparent, white 20%, white 80%, transparent); animation-delay: 0s;"></div>
-            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-blue-600/70 to-transparent animate-[glitch-line_3s_infinite]" style="mask-image: linear-gradient(90deg, transparent, white 30%, white 70%, transparent); animation-delay: 0.3s;"></div>
-            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-blue-800/60 to-transparent animate-[glitch-line_2.5s_infinite]" style="mask-image: linear-gradient(90deg, transparent, white 40%, white 60%, transparent); animation-delay: 0.5s;"></div>
-        </div>
     </div>
 
     <footer class="relative z-10 py-8 px-4 sm:px-6 lg:px-8 text-center text-gray-400 text-sm">
@@ -632,6 +635,93 @@
                 }
             });
         });
+
+        // Payment Modal Functions
+        function openPaymentModal(planName, price) {
+            const paymentModal = document.getElementById('paymentModal');
+            const selectedPlan = document.getElementById('selectedPlan');
+            const selectedPrice = document.getElementById('selectedPrice');
+
+            selectedPlan.textContent = `${planName} Plan`;
+            selectedPrice.textContent = price;
+
+            paymentModal.classList.remove('hidden');
+        }
+
+        // Payment modal event listeners
+        const paymentModal = document.getElementById('paymentModal');
+        const closePaymentModal = document.getElementById('closePaymentModal');
+        const paymentForm = document.getElementById('paymentForm');
+        const cardNumberInput = document.getElementById('cardNumber');
+        const expiryDateInput = document.getElementById('expiryDate');
+        const cvvInput = document.getElementById('cvv');
+
+        if (closePaymentModal && paymentModal) {
+            closePaymentModal.addEventListener('click', () => {
+                paymentModal.classList.add('hidden');
+            });
+
+            paymentModal.addEventListener('click', (e) => {
+                if (e.target === paymentModal) {
+                    paymentModal.classList.add('hidden');
+                }
+            });
+        }
+
+        // Format card number input
+        if (cardNumberInput) {
+            cardNumberInput.addEventListener('input', (e) => {
+                let value = e.target.value.replace(/\D/g, '');
+                value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+                e.target.value = value;
+            });
+        }
+
+        // Format expiry date input
+        if (expiryDateInput) {
+            expiryDateInput.addEventListener('input', (e) => {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length >= 2) {
+                    value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                }
+                e.target.value = value;
+            });
+        }
+
+        // Only allow numbers in CVV
+        if (cvvInput) {
+            cvvInput.addEventListener('input', (e) => {
+                e.target.value = e.target.value.replace(/\D/g, '');
+            });
+        }
+
+        // Handle form submission
+        if (paymentForm) {
+            paymentForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const agreeTerms = document.getElementById('agreeTerms');
+                if (!agreeTerms.checked) {
+                    alert('Please agree to the Terms of Service and Privacy Policy');
+                    return;
+                }
+
+                // Simulate payment processing
+                const submitButton = paymentForm.querySelector('button[type="submit"]');
+                const originalText = submitButton.innerHTML;
+
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
+                submitButton.disabled = true;
+
+                setTimeout(() => {
+                    alert('Payment processed successfully! Welcome to TILDA AI!');
+                    paymentModal.classList.add('hidden');
+                    paymentForm.reset();
+                    submitButton.innerHTML = originalText;
+                    submitButton.disabled = false;
+                }, 2000);
+            });
+        }
     </script>
 
     <!-- Modal for free trial -->
@@ -657,6 +747,76 @@
                         <div class="absolute inset-0 bg-gradient-to-r from-blue-300/50 via-blue-400/80 to-blue-500/50 animate-wave"></div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center">
+        <div class="bg-darkblue/90 backdrop-blur-sm rounded-xl p-8 max-w-lg w-full mx-4 border border-blue-600 neon-glow">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold gradient-text">Complete Payment</h3>
+                <button id="closePaymentModal" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Plan Summary -->
+            <div class="bg-black/40 rounded-lg p-4 mb-6 border border-gray-700">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h4 class="text-lg font-semibold text-white" id="selectedPlan">Pro Plan</h4>
+                        <p class="text-gray-400">Monthly subscription</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-2xl font-bold text-blue-400" id="selectedPrice">$29.99</p>
+                        <p class="text-sm text-gray-400">/month</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Form -->
+            <form id="paymentForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Card Number</label>
+                    <input type="text" placeholder="1234 5678 9012 3456" maxlength="19" class="w-full px-4 py-3 bg-black/40 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors" id="cardNumber">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Expiry Date</label>
+                        <input type="text" placeholder="MM/YY" maxlength="5" class="w-full px-4 py-3 bg-black/40 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors" id="expiryDate">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">CVV</label>
+                        <input type="text" placeholder="123" maxlength="4" class="w-full px-4 py-3 bg-black/40 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors" id="cvv">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Cardholder Name</label>
+                    <input type="text" placeholder="John Doe" class="w-full px-4 py-3 bg-black/40 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors" id="cardholderName">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
+                    <input type="email" placeholder="john@example.com" class="w-full px-4 py-3 bg-black/40 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors" id="email">
+                </div>
+
+                <div class="flex items-center space-x-2 mt-6">
+                    <input type="checkbox" id="agreeTerms" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                    <label for="agreeTerms" class="text-sm text-gray-300">I agree to the <span class="text-blue-400 hover:underline cursor-pointer">Terms of Service</span> and <span class="text-blue-400 hover:underline cursor-pointer">Privacy Policy</span></label>
+                </div>
+
+                <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 mt-6">
+                    <i class="fas fa-lock mr-2"></i>
+                    Complete Payment
+                </button>
+            </form>
+
+            <div class="mt-4 text-center text-sm text-gray-400">
+                <i class="fas fa-shield-alt mr-1"></i>
+                Your payment information is secure and encrypted
             </div>
         </div>
     </div>
