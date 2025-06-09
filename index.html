@@ -138,6 +138,36 @@
         .download-pulse {
             animation: downloadPulse 2s infinite ease-in-out;
         }
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        @keyframes infinite-marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .marquee {
+            animation: infinite-marquee 3s linear infinite;
+            white-space: nowrap;
+            display: inline-block;
+        }
+        .marquee-container {
+            overflow: hidden;
+            background: rgba(0,0,0,0.3);
+            padding: 20px 0;
+            margin-bottom: -20px;
+            z-index: 10;
+            position: relative;
+        }
+        .marquee-text {
+            font-size: 5rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, #ffffff, rgb(249, 234, 181));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: yellow;
+            text-shadow: 0 0 10px rgba(249,234,181,0.3);
+        }
     </style>
 </head>
 <body class="bg-black text-white min-h-screen flex flex-col overflow-x-hidden circuit-pattern">
@@ -270,6 +300,12 @@
             <div class="absolute inset-0 bg-gradient-to-r from-[rgb(249,234,181)] via-[rgb(249,234,181)] to-yellow animate-[pulse_3s_infinite]" style="mask-image: linear-gradient(90deg, transparent, white 30%, white 70%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, white 30%, white 70%, transparent); animation-delay: 0.5s;"></div>
         </div>
     </section>
+    </div>
+
+    <div class="marquee-container">
+        <div class="marquee">
+            <span class="marquee-text">TILDA AI • TILDA AI • TILDA AI • TILDA AI • TILDA AI • TILDA AI • TILDA AI • TILDA AI • TILDA AI • TILDA AI • TILDA AI • TILDA AI •</span>
+        </div>
     </div>
 
     <footer class="relative z-10 py-8 px-4 sm:px-6 lg:px-8 text-center text-gray-400 text-sm">
@@ -545,13 +581,18 @@
 
                 // Check if we've reached the final message
                 if (messageIndex >= messages.length) {
-                    if (!hasCompleted) {
-                        analyzerText.innerHTML = '<span class="text-green-400">✓ Analysis Complete! Everything is ready.</span>';
-                        progressBar.style.width = '100%';
-                        progressBar.style.background = 'linear-gradient(90deg, #10b981, #059669, #047857)';
-                        progressBar.style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.5)';
-                        hasCompleted = true;
-                    }
+                    analyzerText.innerHTML = '<span class="text-green-400">✓ Analysis Complete! Everything is ready.</span>';
+                    progressBar.style.width = '100%';
+                    progressBar.style.background = 'linear-gradient(90deg, #10b981, #059669, #047857)';
+                    progressBar.style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.5)';
+
+                    // Reset and restart analysis after 2 seconds
+                    setTimeout(() => {
+                        messageIndex = 0;
+                        currentText = '';
+                        isDeleting = false;
+                        analyzeUser();
+                    }, 2000);
                     return;
                 }
 
@@ -606,19 +647,21 @@
                 }
             }
 
-            tryButton.addEventListener('click', () => {
-                modal.classList.remove('hidden');
+            function analyzeUser() {
                 messageIndex = 0;
-                startTime = Date.now(); // Start the 5-minute timer
+                currentText = '';
+                isDeleting = false;
+                analyzerText.textContent = '';
                 progressBar.style.width = '0%';
                 progressBar.style.background = 'linear-gradient(90deg, rgb(249, 234, 181), rgb(249, 234, 181), rgb(249, 234, 181))';
                 progressBar.style.boxShadow = 'none';
-                currentText = '';
-                isDeleting = false;
-                isComplete = false;
-                hasCompleted = false;
-                analyzerText.textContent = '';
                 typeWriter();
+            }
+
+            tryButton.addEventListener('click', () => {
+                modal.classList.remove('hidden');
+                startTime = Date.now();
+                analyzeUser();
             });
 
         });
