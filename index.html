@@ -625,15 +625,6 @@
                 typeWriter();
             });
 
-            closeBtn.addEventListener('click', () => {
-                modal.classList.add('hidden');
-            });
-
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.add('hidden');
-                }
-            });
         });
 
         // Payment Modal Functions
@@ -656,17 +647,20 @@
         const expiryDateInput = document.getElementById('expiryDate');
         const cvvInput = document.getElementById('cvv');
 
-        if (closePaymentModal && paymentModal) {
-            closePaymentModal.addEventListener('click', () => {
-                paymentModal.classList.add('hidden');
-            });
-
-            paymentModal.addEventListener('click', (e) => {
-                if (e.target === paymentModal) {
-                    paymentModal.classList.add('hidden');
-                }
-            });
-        }
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('#closePaymentModal')) {
+                document.getElementById('paymentModal').classList.add('hidden');
+            }
+            if (e.target.closest('#closeModal')) {
+                document.getElementById('trialModal').classList.add('hidden');
+            }
+            if (e.target.id === 'paymentModal') {
+                document.getElementById('paymentModal').classList.add('hidden');
+            }
+            if (e.target.id === 'trialModal') {
+                document.getElementById('trialModal').classList.add('hidden');
+            }
+        });
 
         // Format card number input
         if (cardNumberInput) {
