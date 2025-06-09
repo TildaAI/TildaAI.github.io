@@ -142,13 +142,8 @@
 </head>
 <body class="bg-black text-white min-h-screen flex flex-col overflow-x-hidden circuit-pattern">
     <div class="cursor-follower"></div>
-    <!-- Animated neuron network background -->
-    <div class="absolute inset-0 overflow-hidden pointer-events-none">
-        <div class="relative w-full h-full">
-            <!-- Generate neuron nodes -->
-            <div id="neuronNodes" class="relative w-full h-full"></div>
-        </div>
-    </div>
+    <!-- Animated neuron nodes covering entire site -->
+    <div id="neuronNodes" class="fixed inset-0 pointer-events-none z-0"></div>
 
     <header class="relative z-10 py-6 px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center">
@@ -266,7 +261,7 @@
             </div>
             <div class="text-lg text-gray-300">
                 <div class="bg-darkyellow/40 rounded-lg p-6 h-full text-center">
-                    <span class="text-yellow-400 font-medium">Solution:</span> TILDA AI analyzes your audience's behavior patterns to deliver <span class="font-medium text-yellow-400">precision-timed engagement strategies</span> that amplify your influence.
+                    <span class="text-yellow-400 font-medium">Solution:</span> Tilda AI does all the hard work for you! The only thing you might do is slightly edit the post, that's all. We'll analyze your audience to deliver precision-timed engagement strategies that amplify your influence..
                 </div>
             </div>
         </div>
@@ -291,7 +286,7 @@
             const height = container.offsetHeight;
 
             // Create nodes
-            const nodeCount = 15;
+            const nodeCount = 30;
             const nodes = [];
 
             for (let i = 0; i < nodeCount; i++) {
