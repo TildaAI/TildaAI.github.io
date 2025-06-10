@@ -152,27 +152,6 @@
         .download-pulse {
             animation: downloadPulse 2s infinite ease-in-out;
         }
-        @keyframes marquee {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
-        @keyframes infinite-marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-                .marquee {
-            animation: infinite-marquee 20s linear infinite;
-            white-space: nowrap;
-            display: inline-block;
-        }
-        .marquee-container {
-            overflow: hidden;
-            background: rgba(0,0,0,0.3);
-            padding: 20px 0;
-            margin-bottom: -20px;
-            z-index: 10;
-            position: relative;
-        }
         .marquee-text {
             font-size: 5rem;
             font-weight: 900;
@@ -340,10 +319,10 @@
     <div class="marquee">
         <div class="marquee-content">
             <span class="marquee-text">
-                TILDA AI <img src="sticker.png" class="marquee-icon"> TILDA AI <img src="stickker.png" class="marquee-icon"> TILDA AI <img src="stickkker.png" class="marquee-icon"> TILDA AI <img src="stickkkker.png" class="marquee-icon"> TILDA AI <img src="stickkkkker.png" class="marquee-icon"> TILDA AI <img src="stickkkkkker.png" class="marquee-icon"> TILDA AI <img src="stickkkkkkker.png" class="marquee-icon"> TILDA AI <img src="stickkkkkkkker.png" class="marquee-icon"> TILDA AI <img src="stickkkkkkkkkker.png" class="marquee-icon">
+                TILDA AI<img src="sticker.png" class="marquee-icon">TILDA AI<img src="stickker.png" class="marquee-icon">TILDA AI<img src="stickkker.png" class="marquee-icon">TILDA AI<img src="stickkkker.png" class="marquee-icon">TILDA AI<img src="stickkkkker.png" class="marquee-icon">TILDA AI<img src="stickkkkkker.png" class="marquee-icon">TILDA AI<img src="stickkkkkkker.png" class="marquee-icon">TILDA AI<img src="stickkkkkkkker.png" class="marquee-icon">TILDA AI<img src="stickkkkkkkkkker.png" class="marquee-icon">
             </span>
             <span class="marquee-text">
-                TILDA AI <img src="sticker.png" class="marquee-icon"> TILDA AI <img src="stickker.png" class="marquee-icon"> TILDA AI <img src="stickkker.png" class="marquee-icon"> TILDA AI <img src="stickkkker.png" class="marquee-icon"> TILDA AI <img src="stickkkkker.png" class="marquee-icon"> TILDA AI <img src="stickkkkkker.png" class="marquee-icon"> TILDA AI <img src="stickkkkkkker.png" class="marquee-icon"> TILDA AI <img src="stickkkkkkkker.png" class="marquee-icon"> TILDA AI <img src="stickkkkkkkkkker.png" class="marquee-icon">
+                TILDA AI<img src="sticker.png" class="marquee-icon">TILDA AI<img src="stickker.png" class="marquee-icon">TILDA AI<img src="stickkker.png" class="marquee-icon">TILDA AI<img src="stickkkker.png" class="marquee-icon">TILDA AI<img src="stickkkkker.png" class="marquee-icon">TILDA AI<img src="stickkkkkker.png" class="marquee-icon">TILDA AI<img src="stickkkkkkker.png" class="marquee-icon">TILDA AI<img src="stickkkkkkkker.png" class="marquee-icon">TILDA AI<img src="stickkkkkkkkkker.png" class="marquee-icon">
             </span>
         </div>
     </div>
@@ -362,15 +341,15 @@
 }
 
 .marquee-content {
-    display: inline-block;
-    animation: marquee 60s linear infinite;
+    animation: marquee 40s linear infinite;
+    will-change: transform;
+    white-space: nowrap;
 }
-
 .marquee-text {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    margin-right: 40px; /* Отступ между дублированными блоками */
+    gap: 5px;
+    margin-right: 10px;
 }
 
 .marquee-icon {
@@ -401,7 +380,7 @@
 
 @keyframes marquee {
     0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+    100% { transform: translateX(-58%); } /* Меньше смещение = плотнее контент */
 }
 </style>
     
