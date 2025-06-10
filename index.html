@@ -179,7 +179,7 @@
             background: linear-gradient(90deg, #ffffff, rgb(249, 234, 181));
             -webkit-background-clip: text;
             background-clip: text;
-            color: yellow;
+            color: rgb(255,178,102);
             text-shadow: 0 0 10px rgba(249,234,181,0.3);
         }
     </style>
@@ -335,11 +335,51 @@
         </div>
     </section>
 
-    <div class="marquee-container">
-        <div class="marquee">
-            <span class="marquee-text"> TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •</span>
-        </div>
+<div class="marquee-container">
+    <div class="marquee-shadow left"></div>
+    <div class="marquee-shadow right"></div>
+    <div class="marquee">
+        <span class="marquee-text"> TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •</span>
     </div>
+</div>
+
+<style>
+.marquee-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+
+.marquee {
+    white-space: nowrap;
+    display: inline-block;
+    animation: marquee 20s linear infinite;
+}
+
+.marquee-shadow {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 150px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.left {
+    left: 0;
+    background: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+}
+
+.right {
+    right: 0;
+    background: linear-gradient(270deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+}
+
+@keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+</style>
     
     <footer class="relative z-10 py-8 px-4 sm:px-6 lg:px-8 text-center text-gray-400 text-sm">
         <div class="max-w-4xl mx-auto">
