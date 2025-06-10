@@ -160,7 +160,7 @@
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
-        .marquee {
+                .marquee {
             animation: infinite-marquee 20s linear infinite;
             white-space: nowrap;
             display: inline-block;
@@ -339,7 +339,15 @@
     <div class="marquee-shadow left"></div>
     <div class="marquee-shadow right"></div>
     <div class="marquee">
-        <span class="marquee-text"> TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •  TILDA AI  •</span>
+        <div class="marquee-content">
+            <span class="marquee-text">
+                TILDA AI <img src="sticker.png" class="marquee-icon"> TILDA AI <img src="stickker.png" class="marquee-icon"> TILDA AI <img src="stickkker.png" class="marquee-icon"> TILDA AI <img src="stickkkker.png" class="marquee-icon"> TILDA AI <img src="stickkkkker.png" class="marquee-icon"> TILDA AI <img src="stickkkkkker.png" class="marquee-icon"> TILDA AI <img src="stickkkkkkker.png" class="marquee-icon"> TILDA AI <img src="stickkkkkkkker.png" class="marquee-icon"> TILDA AI <img src="stickkkkkkkkkker.png" class="marquee-icon">
+            </span>
+            <!-- Дублируем контент для плавного перехода -->
+            <span class="marquee-text">
+                TILDA AI <img src="sticker.png" class="marquee-icon"> TILDA AI <img src="stickker.png" class="marquee-icon"> TILDA AI <img src="stickkker.png" class="marquee-icon"> TILDA AI <img src="stickkkker.png" class="marquee-icon"> TILDA AI <img src="stickkkkker.png" class="marquee-icon"> TILDA AI <img src="stickkkkkker.png" class="marquee-icon"> TILDA AI <img src="stickkkkkkker.png" class="marquee-icon"> TILDA AI <img src="stickkkkkkkker.png" class="marquee-icon"> TILDA AI <img src="stickkkkkkkkkker.png" class="marquee-icon">
+            </span>
+        </div>
     </div>
 </div>
 
@@ -351,17 +359,34 @@
 }
 
 .marquee {
-    white-space: nowrap;
     display: inline-block;
-    animation: marquee 20s linear infinite;
+    white-space: nowrap;
+}
+
+.marquee-content {
+    display: inline-block;
+    animation: marquee 60s linear infinite;
+}
+
+.marquee-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 40px; /* Отступ между дублированными блоками */
+}
+
+.marquee-icon {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    vertical-align: middle;
 }
 
 .marquee-shadow {
     position: absolute;
     top: 0;
     bottom: 0;
-    width: 600px;
-    height: 600px;
+    width: 150px;
     z-index: 2;
     pointer-events: none;
 }
