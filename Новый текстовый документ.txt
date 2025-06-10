@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tilda AI | Crypto Twitter Enhancement</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkblue: '#0a1a35',
+                        accent: '#1e40af'
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 5s infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        'glitch-line': {
+                            '0%, 100%': { opacity: 0.8 },
+                            '10%, 30%, 50%, 70%, 90%': { opacity: 0.4 },
+                            '20%, 40%, 60%, 80%': { opacity: 1 }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom cursor */
+        .cursor-follower {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            background-color: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.15s ease-out, width 0.2s ease-out, height 0.2s ease-out;
+            mix-blend-mode: screen;
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #ffffff, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .neon-glow {
+            box-shadow: 0 0 10px rgba(30, 64, 175, 0.7), 0 0 20px rgba(30, 64, 175, 0.5);
+        }
+        .circuit-pattern {
+            background-image:
+                radial-gradient(circle at 1px 1px, rgba(30, 64, 175, 0.2) 1px, transparent 0),
+                radial-gradient(circle at 1px 1px, rgba(30, 64, 175, 0.2) 1px, transparent 0);
+            background-size: 30px 30px;
+        }
+        .neuron-node::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #3b82f6;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: background-color 2s ease-in-out, transform 0.5s ease-out;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.7);
+        }
+        .neuron-node.pulse::before {
+            animation: pulse 3s infinite;
+        }
+        .neuron-connection {
+            position: absolute;
+            background-color: rgba(30, 64, 175, 0.3);
+            height: 1px;
+            transform-origin: left center;
+            transition: all 0.3s ease-out;
+        }
+        .neuron-connection.active {
+            background-color: rgba(99, 102, 241, 0.6);
+            height: 2px;
+        }
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .animate-pulse {
+            animation: iconPulse 2s infinite;
+        }
+        .blink {
+            animation: blink-animation 1s steps(5, start) infinite;
+        }
+        @keyframes blink-animation {
+            to { visibility: hidden; }
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
+        }
+        @keyframes wave {
+            0%, 100% { transform: scaleY(1) translateY(0); }
+            50% { transform: scaleY(1.2) translateY(-10%); }
+        }
+        .animate-shimmer {
+            animation: shimmer 2s infinite linear;
+        }
+        .animate-wave {
+            animation: wave 3s infinite ease-in-out;
+        }
+        @keyframes downloadPulse {
+            0%, 100% {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+            25% {
+                transform: scale(1.1) translateY(-2px);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scale(1.05) translateY(2px);
+                opacity: 0.9;
+            }
+            75% {
+                transform: scale(1.08) translateY(-1px);
+                opacity: 0.85;
+            }
+        }
+        .download-pulse {
+            animation: downloadPulse 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-black text-white min-h-screen flex flex-col overflow-x-hidden circuit-pattern">
+    <div class="cursor-follower"></div>
+    <!-- Animated neuron network background -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="relative w-full h-full">
+            <!-- Generate neuron nodes -->
+            <div id="neuronNodes" class="relative w-full h-full"></div>
+        </div>
+    </div>
+
+    <header class="relative z-10 py-6 px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-white to-blue-600 flex items-center justify-center neon-glow">
+                    <span class="text-xl font-bold">T</span>
+                </div>
+                <h1 class="text-xl font-bold">TILDA AI</h1>
+            </div>
+        </div>
+    </header>
+
+    <main class="relative z-10 flex-grow flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+        <div class="max-w-4xl text-center">
+            <div class="animate-float mb-8">
+                <div class="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-white to-blue-600 p-1 neon-glow">
+                    <div class="w-full h-full rounded-full bg-black flex items-center justify-center">
+                        <i class="fas fa-brain text-4xl gradient-text"></i>
+                    </div>
+                </div>
+            </div>
+
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6">
+                <span class="gradient-text">TILDA AI</span>
+            </h1>
+
+            <p class="text-xl sm:text-2xl text-gray-300 mb-8">
+                Next-generation neural network for <span class="font-semibold text-blue-400">Crypto Twitter influencers</span>
+            </p>
+
+            <div class="flex justify-center my-8">
+                <button class="relative inline-flex items-center justify-center px-12 py-4 overflow-hidden text-xl font-bold rounded-xl group bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 hover:from-blue-500 hover:via-blue-600 hover:to-blue-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+                    <span class="relative z-10">Try For Free</span>
+                    <span class="absolute -inset-0.5 bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 rounded-xl blur opacity-0 group-hover:opacity-100 transition duration-300"></span>
+                    <span class="absolute inset-0 rounded-xl bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-blue-900 via-blue-500 to-transparent opacity-0 group-hover:opacity-100 transition duration-300"></span>
+                </button>
+            </div>
+            <div class="bg-darkblue/70 backdrop-blur-sm rounded-xl p-6 sm:p-8 mb-12 border border-gray-800 neon-glow mx-auto max-w-2xl">
+                <p class="text-lg sm:text-xl mb-6">
+                    Analyzes every post, reply, and determines your audience's preferences to craft a <span class="text-blue-400 font-medium">personalized strategy</span> for maximum engagement.
+                </p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <div class="flex items-center space-x-2 text-blue-300 group">
+                        <i class="fas fa-bolt transition-all duration-300 group-hover:text-blue-400 group-hover:scale-110 animate-pulse"></i>
+                        <span class="transition-all duration-300 group-hover:text-blue-400 group-hover:translate-x-1">Optimal post timing</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-blue-300 group">
+                        <i class="fas fa-chart-line transition-all duration-300 group-hover:text-blue-400 group-hover:scale-110 animate-pulse" style="animation-delay: 0.2s"></i>
+                        <span class="transition-all duration-300 group-hover:text-blue-400 group-hover:translate-x-1">Content strategy</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-blue-300 group">
+                        <i class="fas fa-robot transition-all duration-300 group-hover:text-blue-400 group-hover:scale-110 animate-pulse" style="animation-delay: 0.4s"></i>
+                        <span class="transition-all duration-300 group-hover:text-blue-400 group-hover:translate-x-1">Audience analysis</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <section class="relative z-10 py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+        <h2 class="text-3xl font-bold mb-8 text-center gradient-text">Pricing Plans</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-darkblue/70 backdrop-blur-sm rounded-xl p-6 border border-gray-800 hover:shadow-lg transform transition-all duration-500 hover:-translate-y-2">
+                <h3 class="text-xl font-semibold mb-4">Basic</h3>
+                <p class="text-4xl font-bold mb-4">$9.99<span class="text-base text-gray-400">/month</span></p>
+                <ul class="space-y-2 text-gray-300 mb-6">
+                    <li class="flex items-start"><i class="fas fa-check text-blue-400 mr-2 mt-1 animate-pulse" style="animation-delay: 0.1s"></i> Basic analytics</li>
+                    <li class="flex items-start"><i class="fas fa-check text-blue-400 mr-2 mt-1 animate-pulse" style="animation-delay: 0.2s"></i> Daily reports</li>
+                    <li class="flex items-start"><i class="fas fa-check text-blue-400 mr-2 mt-1 animate-pulse" style="animation-delay: 0.3s"></i> Email support</li>
+                </ul>
+                <button class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105" onclick="openPaymentModal('Basic', '$9.99')">
+                    Choose Plan
+                </button>
+            </div>
+            <div class="bg-darkblue/70 backdrop-blur-sm rounded-xl p-6 border border-gray-800 neon-glow hover:shadow-lg transform transition-all duration-500 hover:-translate-y-2">
+                <h3 class="text-xl font-semibold mb-4">Pro</h3>
+                <p class="text-4xl font-bold mb-4">$29.99<span class="text-base text-gray-400">/month</span></p>
+                <ul class="space-y-2 text-gray-300 mb-6">
+                    <li class="flex items-start"><i class="fas fa-check text-blue-400 mr-2 mt-1 animate-pulse" style="animation-delay: 0.1s"></i> Advanced analytics</li>
+                    <li class="flex items-start"><i class="fas fa-check text-blue-400 mr-2 mt-1 animate-pulse" style="animation-delay: 0.2s"></i> Real-time monitoring</li>
+                    <li class="flex items-start"><i class="fas fa-check text-blue-400 mr-2 mt-1 animate-pulse" style="animation-delay: 0.3s"></i> Priority support</li>
+                </ul>
+                <button class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105" onclick="openPaymentModal('Pro', '$29.99')">
+                    Choose Plan
+                </button>
+            </div>
+            <div class="bg-darkblue/70 backdrop-blur-sm rounded-xl p-6 border border-gray-800 hover:shadow-lg transform transition-all duration-500 hover:-translate-y-2">
+                <h3 class="text-xl font-semibold mb-4">Pro+</h3>
+                <p class="text-4xl font-bold mb-4">$99.99<span class="text-base text-gray-400">/month</span></p>
+                <ul class="space-y-2 text-gray-300 mb-6">
+                    <li class="flex items-start"><i class="fas fa-check text-blue-400 mr-2 mt-1 animate-pulse" style="animation-delay: 0.1s"></i> Full API access</li>
+                    <li class="flex items-start"><i class="fas fa-check text-blue-400 mr-2 mt-1 animate-pulse" style="animation-delay: 0.2s"></i> Custom strategies</li>
+                    <li class="flex items-start"><i class="fas fa-check text-blue-400 mr-2 mt-1 animate-pulse" style="animation-delay: 0.3s"></i> 24/7 dedicated support</li>
+                </ul>
+                <button class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105" onclick="openPaymentModal('Pro+', '$99.99')">
+                    Choose Plan
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section class="relative z-10 py-8 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto transition-all duration-500 hover:scale-[1.01] bg-darkblue/70 backdrop-blur-sm rounded-xl p-6 border border-gray-800 neon-glow">
+        <div class="text-center">
+            <h3 class="text-2xl font-bold mb-4 text-blue-400 animate-float" style="animation-delay: 0.2s">
+                The Crypto Engagement Dilemma
+            </h3>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="text-lg text-gray-300">
+                <div class="bg-darkblue/40 rounded-lg p-6 h-full">
+                    <span class="text-blue-300 font-medium">Problem:</span> You're creating great content but struggling to reach the right audience at the optimal times.
+                </div>
+            </div>
+            <div class="text-lg text-gray-300">
+                <div class="bg-darkblue/40 rounded-lg p-6 h-full">
+                    <span class="text-blue-300 font-medium">Solution:</span> TILDA AI analyzes your audience's behavior patterns to deliver <span class="font-medium text-blue-400">precision-timed engagement strategies</span> that amplify your influence.
+                </div>
+            </div>
+        </div>
+        <div class="relative w-full h-4 overflow-hidden my-8">
+            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-blue-400 to-blue-600 animate-[pulse_4s_infinite]" style="mask-image: linear-gradient(90deg, transparent, white, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, white, transparent);"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-blue-400 via-blue-600 to-blue-800 animate-[pulse_3s_infinite]" style="mask-image: linear-gradient(90deg, transparent, white 30%, white 70%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, white 30%, white 70%, transparent); animation-delay: 0.5s;"></div>
+        </div>
+    </section>
+    </div>
+
+    <footer class="relative z-10 py-8 px-4 sm:px-6 lg:px-8 text-center text-gray-400 text-sm">
+        <div class="max-w-4xl mx-auto">
+            <p>© 2025 Tilda AI Neural Network. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create neuron network background
+            const container = document.getElementById('neuronNodes');
+            const width = container.offsetWidth;
+            const height = container.offsetHeight;
+
+            // Create nodes
+            const nodeCount = 15;
+            const nodes = [];
+
+            for (let i = 0; i < nodeCount; i++) {
+                const node = document.createElement('div');
+                node.className = 'neuron-node absolute w-4 h-4';
+
+                // Random position within container
+                const left = Math.random() * width;
+                const top = Math.random() * height;
+
+                node.style.left = `${left}px`;
+                node.style.top = `${top}px`;
+
+                container.appendChild(node);
+                nodes.push({ element: node, x: left, y: top });
+            }
+
+            // Create connections between nearby nodes
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const node1 = nodes[i];
+                    const node2 = nodes[j];
+
+                    const distance = Math.sqrt(
+                        Math.pow(node2.x - node1.x, 2) +
+                        Math.pow(node2.y - node1.y, 2)
+                    );
+
+                    // Only connect nodes that are relatively close
+                    if (distance < width * 0.3) {
+                        const connection = document.createElement('div');
+                        connection.className = 'neuron-connection';
+
+                        connection.style.width = `${distance}px`;
+                        connection.style.left = `${node1.x}px`;
+                        connection.style.top = `${node1.y}px`;
+
+                        const angle = Math.atan2(node2.y - node1.y, node2.x - node1.x);
+                        connection.style.transform = `rotate(${angle}rad)`;
+
+                        // Random animation duration for pulsing effect
+                        const duration = 2 + Math.random() * 3;
+                        connection.style.animation = `pulse ${duration}s infinite`;
+
+                        container.appendChild(connection);
+                    }
+                }
+            }
+
+            // Animate nodes
+            function animateNodes() {
+                const hueVariation = 30; // degrees for color variation
+                const baseHue = 210; // blue hue
+
+                nodes.forEach(node => {
+                    if (!node || !node.element || !node.element.style || !node.element.getBoundingClientRect) return;
+
+                    try {
+                        // Calculate distance to cursor
+                        const nodeRect = node.element.getBoundingClientRect();
+                        const nodeCenterX = nodeRect.left + nodeRect.width/2;
+                        const nodeCenterY = nodeRect.top + nodeRect.height/2;
+                        const distanceToCursor = Math.sqrt(
+                            Math.pow(mouseX - nodeCenterX, 2) +
+                            Math.pow(mouseY - nodeCenterY, 2)
+                        );
+
+                        // Dynamic color change
+                        const randomHue = baseHue + (Math.random() * hueVariation - hueVariation/2);
+                        node.element.className = 'neuron-node pulse absolute w-4 h-4';
+
+                        // Determine movement based on cursor proximity
+                        let moveX, moveY;
+                        const repulsionDistance = 120;
+
+                        if (distanceToCursor < repulsionDistance) {
+                            // Repel from cursor with more force
+                            const directionX = nodeCenterX - mouseX;
+                            const directionY = nodeCenterY - mouseY;
+                            const strength = (repulsionDistance - distanceToCursor) / repulsionDistance;
+                            moveX = (Math.random() * 12 - 6) + directionX * 0.15 * strength;
+                            moveY = (Math.random() * 12 - 6) + directionY * 0.15 * strength;
+                        } else {
+                            // More fluid organic movement
+                            const angle = Math.random() * Math.PI * 2;
+                            const distance = 4 + Math.random() * 4;
+                            moveX = Math.cos(angle) * distance;
+                            moveY = Math.sin(angle) * distance;
+                        }
+
+                        const newX = node.x + moveX;
+                        const newY = node.y + moveY;
+
+                        // Keep within bounds
+                        node.x = Math.max(0, Math.min(width, newX));
+                        node.y = Math.max(0, Math.min(height, newY));
+
+                        // Apply movement with smoother transitions
+                        if (node.element && node.element.style) {
+                            node.element.style.transition = 'all 4s cubic-bezier(0.4, 0, 0.2, 1)';
+                            node.element.style.left = `${node.x}px`;
+                            node.element.style.top = `${node.y}px`;
+                        }
+                    } catch (error) {
+                        // Silently handle any errors with node manipulation
+                        console.log('Node animation error handled');
+                    }
+                });
+
+                // Recreate connections periodically
+                setTimeout(() => {
+                    try {
+                        document.querySelectorAll('.neuron-connection').forEach(el => {
+                            if (el && el.remove) el.remove();
+                        });
+                        createConnections();
+                    } catch (error) {
+                        console.log('Connection recreation error handled');
+                    }
+                }, 8000);
+            }
+
+            function createConnections() {
+                for (let i = 0; i < nodes.length; i++) {
+                    for (let j = i + 1; j < nodes.length; j++) {
+                        const node1 = nodes[i];
+                        const node2 = nodes[j];
+
+                        const distance = Math.sqrt(
+                            Math.pow(node2.x - node1.x, 2) +
+                            Math.pow(node2.y - node1.y, 2)
+                        );
+
+                        // Only connect nodes that are relatively close
+                        if (distance < width * 0.3) {
+                            const connection = document.createElement('div');
+                            connection.className = 'neuron-connection';
+
+                            connection.style.width = `${distance}px`;
+                            connection.style.left = `${node1.x}px`;
+                            connection.style.top = `${node1.y}px`;
+
+                            const angle = Math.atan2(node2.y - node1.y, node2.x - node1.x);
+                            connection.style.transform = `rotate(${angle}rad)`;
+
+                            // Random animation duration for pulsing effect
+                            const duration = 2 + Math.random() * 3;
+                            connection.style.animation = `pulse ${duration}s infinite`;
+
+                            container.appendChild(connection);
+                        }
+                    }
+                }
+            }
+
+            // Variables for cursor position
+            let mouseX = 0;
+            let mouseY = 0;
+
+            // Track cursor position
+            const cursorFollower = document.querySelector('.cursor-follower');
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                updateConnections();
+
+                // Update cursor follower position
+                cursorFollower.style.left = `${e.clientX}px`;
+                cursorFollower.style.top = `${e.clientY}px`;
+
+                // Scale effect when moving fast
+                const movementX = e.movementX;
+                const movementY = e.movementY;
+                const speed = Math.sqrt(movementX * movementX + movementY * movementY);
+                if (speed > 10) {
+                    cursorFollower.style.width = '40px';
+                    cursorFollower.style.height = '40px';
+                } else {
+                    cursorFollower.style.width = '30px';
+                    cursorFollower.style.height = '30px';
+                }
+            });
+
+            // Update connections based on cursor position
+            function updateConnections() {
+                const connections = document.querySelectorAll('.neuron-connection');
+                connections.forEach(conn => {
+                    const rect = conn.getBoundingClientRect();
+                    const midX = rect.left + rect.width/2;
+                    const midY = rect.top + rect.height/2;
+
+                    const distance = Math.sqrt(
+                        Math.pow(mouseX - midX, 2) +
+                        Math.pow(mouseY - midY, 2)
+                    );
+
+                    const influenceRadius = 200;
+                    if (distance < influenceRadius) {
+                        const strength = 1 - (distance / influenceRadius);
+                        conn.classList.add('active');
+                        conn.style.transform = `${conn.style.transform} scaleX(${1 + strength*0.3})`;
+                        conn.style.opacity = 0.3 + strength*0.7;
+                    } else {
+                        conn.classList.remove('active');
+                        conn.style.transform = conn.style.transform.replace(/scaleX\([^)]*\)/, '');
+                        conn.style.opacity = 0.3;
+                    }
+                });
+            }
+
+            // Start animations with shorter intervals
+            setInterval(animateNodes, 2000);
+            animateNodes(); // Initial call
+
+            // Animate connections continuously
+            setInterval(updateConnections, 50);
+
+            // Modal functionality
+            const messages = [
+                "Analyzing your profile",
+                "Doing some research",
+                "Thinking about your posts",
+                "Thinking about your replies",
+                "Determining your type of audience",
+                "Making personalized plan",
+                "Some research again",
+                "Clearing unnecessary things",
+                "Summing it all up",
+                "Final push!",
+                "Few seconds left!",
+                "Done!"
+            ];
+
+            const modal = document.getElementById('trialModal');
+            const closeBtn = document.getElementById('closeModal');
+            const analyzerText = document.getElementById('analyzerText');
+            const progressBar = document.getElementById('progressBar');
+            const tryButton = document.querySelector('main button');
+
+            // Check if all elements exist before adding event listeners
+            if (!modal || !closeBtn || !analyzerText || !progressBar || !tryButton) {
+                console.log('Modal elements not found, skipping modal functionality');
+                return;
+            }
+
+            let typingSpeed = 150;
+            let isComplete = false;
+            let startTime = 0;
+            let hasCompleted = false;
+            const totalDuration = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+            function typeWriter() {
+                if (!analyzerText || !progressBar) return;
+
+                const elapsed = Date.now() - startTime;
+
+                // Check if we've reached the final message
+                if (messageIndex >= messages.length) {
+                    if (!hasCompleted) {
+                        analyzerText.innerHTML = '<span class="text-green-400">✓ Analysis Complete! Everything is ready.</span>';
+                        progressBar.style.width = '100%';
+                        progressBar.style.background = 'linear-gradient(90deg, #10b981, #059669, #047857)';
+                        progressBar.style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.5)';
+                        hasCompleted = true;
+                    }
+                    return;
+                }
+
+                // Check if 5 minutes have passed (fallback)
+                if (elapsed >= totalDuration) {
+                    if (!hasCompleted) {
+                        analyzerText.innerHTML = '<span class="text-green-400">✓ Analysis Complete! Everything is ready.</span>';
+                        progressBar.style.width = '100%';
+                        progressBar.style.background = 'linear-gradient(90deg, #10b981, #059669, #047857)';
+                        progressBar.style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.5)';
+                        hasCompleted = true;
+                    }
+                    return;
+                }
+
+                const fullMessage = messages[messageIndex];
+
+                if (isDeleting) {
+                    currentText = fullMessage.substring(0, currentText.length - 1);
+                } else {
+                    currentText = fullMessage.substring(0, currentText.length + 1);
+                }
+
+                analyzerText.textContent = currentText + (isDeleting ? '' : '|');
+
+                if (!isDeleting && currentText === fullMessage) {
+                    // Update progress bar based on message completion
+                    const messageProgress = ((messageIndex + 1) / messages.length) * 100;
+                    progressBar.style.width = `${messageProgress}%`;
+
+                    // If this is the last message ("Done!"), complete the progress bar
+                    if (messageIndex === messages.length - 1) {
+                        progressBar.style.width = '100%';
+                        progressBar.style.background = 'linear-gradient(90deg, #10b981, #059669, #047857)';
+                        progressBar.style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.5)';
+                    }
+
+                    // Calculate how long to stay on this message
+                    const timePerMessage = totalDuration / messages.length;
+                    const displayTime = Math.max(2000, timePerMessage * 0.3); // At least 2 seconds, or 30% of allocated time
+
+                    isDeleting = true;
+                    typingSpeed = 100;
+                    setTimeout(typeWriter, displayTime);
+                } else if (isDeleting && currentText === '') {
+                    isDeleting = false;
+                    messageIndex++;
+                    typingSpeed = 150;
+                    setTimeout(typeWriter, 500);
+                } else {
+                    setTimeout(typeWriter, typingSpeed);
+                }
+            }
+
+            tryButton.addEventListener('click', () => {
+                modal.classList.remove('hidden');
+                messageIndex = 0;
+                startTime = Date.now(); // Start the 5-minute timer
+                progressBar.style.width = '0%';
+                progressBar.style.background = 'linear-gradient(90deg, #3b82f6, #2563eb, #1d4ed8)';
+                progressBar.style.boxShadow = 'none';
+                currentText = '';
+                isDeleting = false;
+                isComplete = false;
+                hasCompleted = false;
+                analyzerText.textContent = '';
+                typeWriter();
+            });
+
+        });
+
+        // Payment Modal Functions
+        function openPaymentModal(planName, price) {
+            const paymentModal = document.getElementById('paymentModal');
+            const selectedPlan = document.getElementById('selectedPlan');
+            const selectedPrice = document.getElementById('selectedPrice');
+
+            selectedPlan.textContent = `${planName} Plan`;
+            selectedPrice.textContent = price;
+
+            paymentModal.classList.remove('hidden');
+        }
+
+        // Payment modal event listeners
+        const paymentModal = document.getElementById('paymentModal');
+        const closePaymentModal = document.getElementById('closePaymentModal');
+        const paymentForm = document.getElementById('paymentForm');
+        const cardNumberInput = document.getElementById('cardNumber');
+        const expiryDateInput = document.getElementById('expiryDate');
+        const cvvInput = document.getElementById('cvv');
+
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('#closePaymentModal')) {
+                document.getElementById('paymentModal').classList.add('hidden');
+            }
+            if (e.target.closest('#closeModal')) {
+                document.getElementById('trialModal').classList.add('hidden');
+            }
+            if (e.target.id === 'paymentModal') {
+                document.getElementById('paymentModal').classList.add('hidden');
+            }
+            if (e.target.id === 'trialModal') {
+                document.getElementById('trialModal').classList.add('hidden');
+            }
+        });
+
+        // Format card number input
+        if (cardNumberInput) {
+            cardNumberInput.addEventListener('input', (e) => {
+                let value = e.target.value.replace(/\D/g, '');
+                value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+                e.target.value = value;
+            });
+        }
+
+        // Format expiry date input
+        if (expiryDateInput) {
+            expiryDateInput.addEventListener('input', (e) => {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length >= 2) {
+                    value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                }
+                e.target.value = value;
+            });
+        }
+
+        // Only allow numbers in CVV
+        if (cvvInput) {
+            cvvInput.addEventListener('input', (e) => {
+                e.target.value = e.target.value.replace(/\D/g, '');
+            });
+        }
+
+        // Handle form submission
+        if (paymentForm) {
+            paymentForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const agreeTerms = document.getElementById('agreeTerms');
+                if (!agreeTerms.checked) {
+                    alert('Please agree to the Terms of Service and Privacy Policy');
+                    return;
+                }
+
+                // Simulate payment processing
+                const submitButton = paymentForm.querySelector('button[type="submit"]');
+                const originalText = submitButton.innerHTML;
+
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
+                submitButton.disabled = true;
+
+                setTimeout(() => {
+                    alert('Payment processed successfully! Welcome to TILDA AI!');
+                    paymentModal.classList.add('hidden');
+                    paymentForm.reset();
+                    submitButton.innerHTML = originalText;
+                    submitButton.disabled = false;
+                }, 2000);
+            });
+        }
+    </script>
+
+    <!-- Modal for free trial -->
+    <div id="trialModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center">
+        <div class="bg-darkblue/90 backdrop-blur-sm rounded-xl p-8 max-w-md w-full mx-4 border border-blue-600 neon-glow">
+            <div class="flex justify-end mb-4">
+                <button id="closeModal" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="text-center">
+                <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-white to-blue-600 p-1 neon-glow mb-6">
+                    <div class="w-full h-full rounded-full bg-black flex items-center justify-center">
+                        <i class="fas fa-download text-2xl gradient-text download-pulse"></i>
+                    </div>
+                </div>
+                <h3 class="text-xl font-bold mb-6 gradient-text">Analyzing Your Profile</h3>
+                <div id="analyzerText" class="h-12 text-lg font-mono text-blue-300 overflow-hidden"></div>
+                <div class="mt-8 w-full bg-gray-700 rounded-full h-3 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-blue-400/20 to-transparent animate-pulse"></div>
+                    <div id="progressBar" class="bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 h-3 rounded-full relative overflow-hidden transition-all duration-500 ease-out" style="width: 0%">
+                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
+                        <div class="absolute inset-0 bg-gradient-to-r from-blue-300/50 via-blue-400/80 to-blue-500/50 animate-wave"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center">
+        <div class="bg-darkblue/90 backdrop-blur-sm rounded-xl p-8 max-w-lg w-full mx-4 border border-blue-600 neon-glow">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold gradient-text">Complete Payment</h3>
+                <button id="closePaymentModal" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Plan Summary -->
+            <div class="bg-black/40 rounded-lg p-4 mb-6 border border-gray-700">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h4 class="text-lg font-semibold text-white" id="selectedPlan">Pro Plan</h4>
+                        <p class="text-gray-400">Monthly subscription</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-2xl font-bold text-blue-400" id="selectedPrice">$29.99</p>
+                        <p class="text-sm text-gray-400">/month</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Form -->
+            <form id="paymentForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Card Number</label>
+                    <input type="text" placeholder="1234 5678 9012 3456" maxlength="19" class="w-full px-4 py-3 bg-black/40 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors" id="cardNumber">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Expiry Date</label>
+                        <input type="text" placeholder="MM/YY" maxlength="5" class="w-full px-4 py-3 bg-black/40 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors" id="expiryDate">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">CVV</label>
+                        <input type="text" placeholder="123" maxlength="4" class="w-full px-4 py-3 bg-black/40 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors" id="cvv">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Cardholder Name</label>
+                    <input type="text" placeholder="John Doe" class="w-full px-4 py-3 bg-black/40 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors" id="cardholderName">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
+                    <input type="email" placeholder="john@example.com" class="w-full px-4 py-3 bg-black/40 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors" id="email">
+                </div>
+
+                <div class="flex items-center space-x-2 mt-6">
+                    <input type="checkbox" id="agreeTerms" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                    <label for="agreeTerms" class="text-sm text-gray-300">I agree to the <span class="text-blue-400 hover:underline cursor-pointer">Terms of Service</span> and <span class="text-blue-400 hover:underline cursor-pointer">Privacy Policy</span></label>
+                </div>
+
+                <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 mt-6">
+                    <i class="fas fa-lock mr-2"></i>
+                    Complete Payment
+                </button>
+            </form>
+
+            <div class="mt-4 text-center text-sm text-gray-400">
+                <i class="fas fa-shield-alt mr-1"></i>
+                Your payment information is secure and encrypted
+            </div>
+        </div>
+    </div>
+</body>
+</html>
