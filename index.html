@@ -383,7 +383,7 @@
     100% { transform: translateX(-59%); } /* Меньше смещение = плотнее контент */
 }
 </style>
-    
+
     <footer class="relative z-10 py-8 px-4 sm:px-6 lg:px-8 text-center text-gray-400 text-sm">
         <div class="max-w-4xl mx-auto">
             <p>© 2025 Tilda AI Neural Network. All rights reserved.</p>
@@ -734,8 +734,47 @@
                 typeWriter();
             }
 
+            // Input panel elements
+            const inputModal = document.getElementById('inputModal');
+            const closeInputModal = document.getElementById('closeInputModal');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const usernameInput = document.getElementById('usernameInput');
+            const usernameDisplay = document.getElementById('usernameDisplay');
+
+            // Open input panel when try button is clicked
             tryButton.addEventListener('click', () => {
+                inputModal.classList.remove('hidden');
+            });
+
+            // Close input panel
+            closeInputModal.addEventListener('click', () => {
+                inputModal.classList.add('hidden');
+            });
+
+            // Handle analyze button click
+            analyzeBtn.addEventListener('click', () => {
+                const username = usernameInput.value.trim();
+                if (!username) {
+                    alert('Please enter a username');
+                    return;
+                }
+                if (!username.startsWith('@')) {
+                    alert('Username must start with @');
+                    return;
+                }
+                if (username === '@') {
+                    alert('Please enter a valid username after @');
+                    return;
+                }
+
+                // Close input panel and open analysis panel
+                inputModal.classList.add('hidden');
                 modal.classList.remove('hidden');
+
+                // Show the username in analysis panel
+                usernameDisplay.textContent = username;
+
+                // Start analysis
                 startTime = Date.now();
                 analyzeUser();
             });
@@ -833,6 +872,32 @@
         }
     </script>
 
+    <!-- Input Panel Modal -->
+    <div id="inputModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center">
+        <div class="bg-darkyellow/90 backdrop-blur-sm rounded-xl p-8 max-w-md w-full mx-4 border border-yellow-400 neon-glow">
+            <div class="flex justify-end mb-4">
+                <button id="closeInputModal" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="text-center">
+                <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-white to-amber-400 p-1 neon-glow mb-6">
+                    <div class="w-full h-full rounded-full bg-black flex items-center justify-center">
+                        <i class="fas fa-user text-2xl gradient-text download-pulse"></i>
+                    </div>
+                </div>
+                <h3 class="text-xl font-bold mb-6 gradient-text">Enter Twitter Username</h3>
+                <div class="mb-6">
+                    <input type="text" id="usernameInput" placeholder="@username" class="w-full px-4 py-3 bg-black/40 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 text-center">
+                </div>
+                <button id="analyzeBtn" class="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105">
+                    Analyze Profile
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analysis Panel Modal -->
     <div id="trialModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center">
         <div class="bg-darkyellow/90 backdrop-blur-sm rounded-xl p-8 max-w-md w-full mx-4 border border-yellow-400 neon-glow">
             <div class="flex justify-end mb-4">
@@ -846,7 +911,7 @@
                         <i class="fas fa-download text-2xl gradient-text download-pulse"></i>
                     </div>
                 </div>
-                <h3 class="text-xl font-bold mb-6 gradient-text">Analyzing Your Profile</h3>
+                <h3 class="text-xl font-bold mb-6 gradient-text">Analyzing <span id="usernameDisplay"></span>'s Profile</h3>
                 <div id="analyzerText" class="h-12 text-lg font-mono text-amber-200 overflow-hidden"></div>
                 <div class="mt-8 w-full bg-gray-700 rounded-full h-3 relative overflow-hidden">
                     <div class="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400/20 to-transparent animate-pulse"></div>
